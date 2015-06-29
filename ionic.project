@@ -1,0 +1,12 @@
+{
+  "name": "app-musikais",
+  "app_id": "935b705b",
+  "gulpStartupTasks": [
+    "sass",
+    "watch"
+  ],
+  "watchPatterns": [
+    "www/**/*",
+    "!www/lib/**/*"
+  ]
+}
