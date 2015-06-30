@@ -1,3 +1,5 @@
+var map;
+
 angular.module('starter.controllers', [])
 
     .controller('DashCtrl', function($scope) {})
@@ -20,10 +22,10 @@ angular.module('starter.controllers', [])
     .controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {
     $scope.chat = Chats.get($stateParams.chatId);
 })
-    .controller('MapController', function($scope, $ionicLoading, $compile) {
+    .controller('MapController', function($scope, $ionicLoading, $compile, $http) {
     $scope.initialize = function() {
-        var myLatlng = new google.maps.LatLng(43.07493,-89.381388);
-        
+        var myLatlng = new google.maps.LatLng(-25.428877,-49.271377);
+
         //Marker + infowindow + angularjs compiled ng-click
         var contentString = "<div><a ng-click='clickTest()'>Olá!</a></div>";
         var compiled = $compile(contentString)($scope);
@@ -37,8 +39,8 @@ angular.module('starter.controllers', [])
             zoom: 16,
             mapTypeId: google.maps.MapTypeId.ROADMAP
         };
-        var map = new google.maps.Map(document.getElementById("map"),
-                                      mapOptions);
+        map = new google.maps.Map(document.getElementById("map"),
+                                  mapOptions);
 
 
         var marker = new google.maps.Marker({
@@ -47,9 +49,31 @@ angular.module('starter.controllers', [])
             title: 'Musikais Curitiba'
         });
 
+        //INIT PONTOS
+        $http.get('http://servidor-musikais.rhcloud.com/recommendation/get/regions').
+        success(function(data) {
+            for (var ponto in data) {
+                $scope.pontos = data;
+                angular.forEach($scope.pontos, function(ponto){
+                    var regiaoOptions = new google.maps.Circle({
+                        strokeColor: '#33cd5f',
+                        strokeOpacity: 0.1,
+                        strokeWeight: 0.1,
+                        fillColor: '#33cd5f',
+                        fillOpacity: 0.06,
+                        map: map,
+                        center: new google.maps.LatLng(ponto.latitude, ponto.longitude),
+                        radius: ponto.raio
+
+                    });
+                });
+            }
+        });
+
         google.maps.event.addListener(marker, 'click', function() {
             infowindow.open(map,marker);
         });
+
 
         $scope.map = map;
     }
