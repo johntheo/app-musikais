@@ -1,9 +1,16 @@
-<ion-view view-title="Account">
-  <ion-content>
-    <ion-list>
-    <ion-toggle  ng-model="settings.enableFriends">
-        Enable Friends
-    </ion-toggle>
-    </ion-list>
-  </ion-content>
+<ion-view view-title="Configurações">
+    <ion-content>
+        <ion-list>
+            <ion-toggle  class="item item-icon-left item-icon-right" ng-model="settings.enableFriends">
+                <i class="icon ion-ios-locked-outline"></i>
+                Permitir coleta de dados anônimo
+            </ion-toggle>
+
+            <ion-toggle  class="item item-icon-left item-icon-right" ng-model="settings.enableClima">
+                <i class="icon ion-ios-cloud-outline"></i>
+                Monitorar clima
+            </ion-toggle>
+
+        </ion-list>
+    </ion-content>
 </ion-view>
