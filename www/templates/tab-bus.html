@@ -1,0 +1,22 @@
+<ion-view title="Ônibus">
+    <ion-content ng-controller="MapController" ng-init="initialize()" scroll="false">
+        <div class="list no-padding">
+            <label class="item item-input item-select">
+                <div class="input-label">
+                    Onibus
+                </div>
+                <select ng-model="bus" ng-options="bus.id for bus in onibus track by bus.id"></select>
+            </label>
+            <label class="item item-input item-select">
+                <div class="input-label">
+                    Motorista
+                </div>
+                <select ng-model="motorista" ng-options="motorista.nome for motorista in motoristas track by motorista.nome"></select>
+            </label>
+
+            <button class="full-image button button-full button-balanced icon ion-play"></button>
+        </div>
+
+        <div id="map" data-tap-disabled="true"></div>
+    </ion-content>
+</ion-view>

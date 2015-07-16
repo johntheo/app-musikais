@@ -2,29 +2,49 @@ var map;
 
 angular.module('starter.controllers', [])
 
-    .controller('DashCtrl', function($scope) {})
-
-    .controller('ChatsCtrl', function($scope, Chats) {
-    // With the new view caching in Ionic, Controllers are only called
-    // when they are recreated or on app start, instead of every page change.
-    // To listen for when this page is active (for example, to refresh data),
-    // listen for the $ionicView.enter event:
-    //
-    //$scope.$on('$ionicView.enter', function(e) {
-    //});
-
-    $scope.chats = Chats.all();
-    $scope.remove = function(chat) {
-        Chats.remove(chat);
-    }
+    .controller('ConfigCtrl', function($scope) {
+    $scope.settings = {
+        enableGPS: true
+    };
+})
+    
+    .controller('UserCtrl', function($scope,$http) {
+    $scope.show = false;
+    
+    $http.get('http://servidor-musikais.rhcloud.com/util/list/onibus').
+    success(function(data) {
+        $scope.onibus = data;
+        $scope.bus = onibus[1];
+    });
+    
+    $scope.change = function(bus) {
+        $http.get('http://servidor-musikais.rhcloud.com/busUserContext/idOnibus='+bus.id).
+        success(function(data) {
+            $scope.show = true;
+            $scope.busContext = data;
+            $http.get('http://servidor-musikais.rhcloud.com/util/list/imagens/idRegiao='+data.regiao.id).
+            success(function(data2) {
+                $scope.imagens = data2;
+            }); 
+        });
+    };
 })
 
-    .controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {
-    $scope.chat = Chats.get($stateParams.chatId);
-})
     .controller('MapController', function($scope, $ionicLoading, $compile, $http) {
+    $http.get('http://servidor-musikais.rhcloud.com/util/list/motorista').
+    success(function(data) {
+        $scope.motoristas = data;
+        $scope.motorista = motoristas[1];
+    });
+
+    $http.get('http://servidor-musikais.rhcloud.com/util/list/onibus').
+    success(function(data) {
+        $scope.onibus = data;
+        $scope.bus = onibus[1];
+    });
+
     $scope.initialize = function() {
-        var myLatlng = new google.maps.LatLng(-25.428877,-49.271377);
+        var myLatlng = new google.maps.LatLng(-25.428877, -49.271377);
 
         //Marker + infowindow + angularjs compiled ng-click
         var contentString = "<div><a ng-click='clickTest()'>Olá!</a></div>";
@@ -52,9 +72,9 @@ angular.module('starter.controllers', [])
         //INIT PONTOS
         $http.get('http://servidor-musikais.rhcloud.com/recommendation/get/regions').
         success(function(data) {
+            $scope.pontos = data;
             for (var ponto in data) {
-                $scope.pontos = data;
-                angular.forEach($scope.pontos, function(ponto){
+                angular.forEach($scope.pontos, function(ponto) {
                     var regiaoOptions = new google.maps.Circle({
                         strokeColor: '#33cd5f',
                         strokeOpacity: 0.1,
@@ -71,19 +91,14 @@ angular.module('starter.controllers', [])
         });
 
         google.maps.event.addListener(marker, 'click', function() {
-            infowindow.open(map,marker);
+            infowindow.open(map, marker);
         });
 
 
         $scope.map = map;
+        
     }
     //google.maps.event.addDomListener(window, 'load', initialize);
 
 
-})
-
-    .controller('AccountCtrl', function($scope) {
-    $scope.settings = {
-        enableFriends: true
-    };
 });

@@ -37,57 +37,37 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     })
 
     // Each tab has its own nav history stack:
-
-        .state('tab.dash', {
-        url: '/dash',
+        .state('tab.bus', {
+        url: '/bus',
         views: {
-            'tab-dash': {
-                templateUrl: 'templates/tab-dash.html',
-                controller: 'DashCtrl'
-            }
-        }
-    })
-
-        .state('tab.chats', {
-        url: '/chats',
-        views: {
-            'tab-chats': {
-                templateUrl: 'templates/tab-chats.html',
-                controller: 'ChatsCtrl'
-            }
-        }
-    })
-        .state('tab.chat-detail', {
-        url: '/chats/:chatId',
-        views: {
-            'tab-chats': {
-                templateUrl: 'templates/chat-detail.html',
-                controller: 'ChatDetailCtrl'
-            }
-        }
-    })
-
-        .state('tab.map', {
-        url: '/map',
-        views: {
-            'tab-map': {
-                templateUrl: 'templates/tab-map.html',
+            'tab-bus': {
+                templateUrl: 'templates/tab-bus.html',
                 controller: 'MapController'
             }
         }
     })
-
-        .state('tab.account', {
-        url: '/account',
+    
+        .state('tab.user', {
+        url: '/user',
         views: {
-            'tab-account': {
-                templateUrl: 'templates/tab-account.html',
-                controller: 'AccountCtrl'
+            'tab-user': {
+                templateUrl: 'templates/tab-user.html',
+                controller: 'UserCtrl'
+            }
+        }
+    })
+    
+        .state('tab.config', {
+        url: '/config',
+        views: {
+            'tab-config': {
+                templateUrl: 'templates/tab-config.html',
+                controller: 'ConfigCtrl'
             }
         }
     });
 
     // if none of the above states are matched, use this as the fallback
-    $urlRouterProvider.otherwise('/tab/dash');
+    $urlRouterProvider.otherwise('/tab/bus');
 
 });

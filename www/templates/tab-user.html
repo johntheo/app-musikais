@@ -1,0 +1,35 @@
+<ion-view view-title="Musikais Curitiba">
+    <ion-content scroll="false">
+        <label class="item item-input item-select">
+            <div class="input-label">
+                Onibus
+            </div>
+            <select ng-model="bus" ng-options="bus.id for bus in onibus track by bus.id" ng-change="change(bus)"></select>
+        </label>
+        
+        <div class="item item-clear animate-show" ng-show="show">
+            <h2>{{busContext.regiao.nome}}</h2>
+            <p><i>{{busContext.regiao.tipoRegiao}} | {{busContext.climaRest.mainInstance.temperature }}ºC  </i></p>
+        </div>
+
+        <div class="item item-body animate-show" ng-show="show">
+            <img ng-src="http://curitiba.musikais.com/imagens/{{imagens[0]}}" class="full-image"/>
+            
+            <ion-scroll zooming="true" direction="xy" style="width: 100%; height: 120px">
+                <p>
+                    {{busContext.regiao.descricao}}
+                </p>    
+            </ion-scroll>
+        </div>
+
+        <div class="item tabs tabs-secondary tabs-icon-left animate-show" ng-show="show">
+            <a class="tab-item" href="#">
+                <i class="icon ion-thumbsup"></i>
+            </a>
+            <a class="tab-item" href="#">
+                <i class="icon ion-thumbsdown"></i> 
+            </a>
+        </div>
+
+    </ion-content>
+</ion-view>
