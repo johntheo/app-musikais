@@ -8,7 +8,7 @@ angular.module('starter.controllers', [])
     };
 })
     
-    .controller('UserCtrl', function($scope,$http) {
+    .controller('UserCtrl', function($scope,$http,$ionicLoading) {
     $scope.show = false;
     
     $http.get('http://servidor-musikais.rhcloud.com/util/list/onibus').
@@ -26,6 +26,13 @@ angular.module('starter.controllers', [])
             success(function(data2) {
                 $scope.imagens = data2;
             }); 
+        });
+    };
+
+    $scope.vote = function(bus,idVoto){
+        $http.get('http://servidor-musikais.rhcloud.com/busUserContext/rate/idOnibus='+bus.id+'&idVoto='+idVoto).
+        success(function(data) {
+            $ionicLoading.show({ template: data.message, noBackdrop: true, duration: 2000 });
         });
     };
 })
