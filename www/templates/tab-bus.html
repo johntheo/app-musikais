@@ -22,8 +22,8 @@
         <i class="icon ion-hammer balanced"></i> Force
       </ion-toggle>-->
       <label class="item item-input" ng-show="settings.force">
-        <input type="text" ng-model="latText" placeholder="Latitude">
-        <input type="text" ng-model="lngText" placeholder="Longitude">
+        <input type="number" ng-model="latText" placeholder="Latitude">
+        <input type="number" ng-model="lngText" placeholder="Longitude">
       </label>
       <label class="item no-padding" ng-show="settings.monitor">
         <ion-scroll class="busDebug" zooming="false" direction="y">
