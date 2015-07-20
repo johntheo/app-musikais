@@ -7,7 +7,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'ngCordova'])
 
-.run(function($ionicPlatform, $ionicPlatform, $cordovaGeolocation, geoLocation) {
+.run(function($ionicPlatform, $ionicPlatform, $cordovaGeolocation) {
   $ionicPlatform.ready(function() {
 
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -45,7 +45,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     views: {
       'tab-bus': {
         templateUrl: 'templates/tab-bus.html',
-        controller: 'MapController'
+        controller: 'BusCtrl'
       }
     }
   })
@@ -65,7 +65,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     views: {
       'tab-config': {
         templateUrl: 'templates/tab-config.html',
-        controller: 'ConfigCtrl'
+        controller: 'BusCtrl'
       }
     }
   });

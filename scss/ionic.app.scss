@@ -14,7 +14,7 @@ $assertive:                       #ef473a !default;
 $royal:                           #886aea !default;
 $dark:                            #444 !default;
 */
-
+$balanced:                        #2BD28B !default;
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
 
@@ -22,12 +22,11 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 // Include all of Ionic
 @import "www/lib/ionic/scss/ionic";
 
-.buttom-play {
-    padding: 0px !important;
-    margin-top: 0px !important;
-    margin-bottom: 0px !important;
-    position: fixed;
-    margin-left: -60px !important;
+.button-play {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 48px;
+
 }
 .buttom-like {
     padding: 0px !important;
@@ -48,14 +47,36 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 
 //MAP CSS
 #map {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+}
+
+.map-class1{
+  height: 45% !important;
+}
+.map-class2{
+  height: 60% !important;
+}
+.map-class3{
+  height: 73% !important;
+}
+.map-class4{
+  height: 80% !important;
 }
 
 .scroll {
     height: 100%;
 }
 
+.no-padding{
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 i.bus-button.ion-play {
     font-size: 90px;
+}
+
+.busDebug{
+  width: 100%;
+  height: 130px !important;
 }

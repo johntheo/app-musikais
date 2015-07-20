@@ -1,12 +1,10 @@
 angular.module('starter.controllers', [])
 
-.controller('ConfigCtrl', function($scope) {
-  $scope.settings = {
-    enableGPS: true
-  };
+.controller('ConfigCtrl', function($scope, settings) {
+  $scope.settings = settings;
 })
 
-.controller('UserCtrl', function($scope, $http, $ionicLoading) {
+.controller('UserCtrl', function($scope, $http, $ionicLoading, settings) {
   $scope.show = false;
 
   $http.get('http://servidor-musikais.rhcloud.com/util/list/onibus').
@@ -38,7 +36,11 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('MapController', function($scope, $ionicLoading, $compile, $http) {
+.controller('BusCtrl', function($scope, $ionicLoading, $compile, $http, settings) {
+  $scope.settings = settings;
+  $scope.latText = -25.428877;
+  $scope.lngText = -49.271377;
+
   $scope.initialize = function() {
     $http.get('http://servidor-musikais.rhcloud.com/util/list/motorista').
     success(function(data) {
@@ -53,12 +55,22 @@ angular.module('starter.controllers', [])
       frequency: 1000,
       timeout: 30000
     };
-    watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
     initMap();
+    watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
   }
 
   function initMap() {
-    var myLatlng = new google.maps.LatLng(-25.428877, -49.271377);
+    if($scope.settings.monitor && $scope.settings.force){
+      $scope.mapClass = "map-class1";
+    } else if($scope.settings.monitor && !$scope.settings.force){
+      $scope.mapClass = "map-class2";
+    } else if(!$scope.settings.monitor && $scope.settings.force){
+      $scope.mapClass = "map-class3";
+    } else if(!$scope.settings.monitor && !$scope.settings.force){
+      $scope.mapClass = "map-class4";
+    }
+
+    var myLatlng = new google.maps.LatLng($scope.latText, $scope.lngText);
 
     var mapOptions = {
       center: myLatlng,
@@ -120,18 +132,44 @@ angular.module('starter.controllers', [])
   }
 
   function onSuccess(position) {
-    $scope.longitude = position.coords.longitude;
-    $scope.latitude = position.coords.latitude;
-    var element = document.getElementById('info');
-    element.innerHTML = 'Latitude: ' + $scope.latitude + ' | ' + 'Longitude: ' + $scope.longitude;
-    $scope.marker.setPosition(new google.maps.LatLng($scope.latitude, $scope.longitude));
-    $scope.map.panTo(new google.maps.LatLng($scope.latitude, $scope.longitude));
+    if(!$scope.settings.force){
+      $scope.longitude = position.coords.longitude;
+      $scope.latitude = position.coords.latitude;
+      $scope.marker.setPosition(new google.maps.LatLng($scope.latitude, $scope.longitude));
+      $scope.map.panTo(new google.maps.LatLng($scope.latitude, $scope.longitude));
+      horaAtual();
+      obterContexto(position.coords.latitude,position.coords.longitude);
+    }else{
+      $scope.longitude = $scope.latText;
+      $scope.latitude = $scope.lngText;
+      $scope.marker.setPosition(new google.maps.LatLng($scope.latText, $scope.lngText));
+      $scope.map.panTo(new google.maps.LatLng($scope.latText, $scope.lngText));
+      horaAtual();
+      obterContexto($scope.latText,$scope.lngText);
+    }
 
   }
 
   function onError(error) {
     alert('code: ' + error.code + '\n' +
       'message: ' + error.message + '\n');
+  }
+
+  function horaAtual() {
+    var d = new Date();
+    var h = d.getHours();
+    var m = d.getMinutes();
+    var s = d.getSeconds();
+    $scope.hora = h;
+    $scope.minuto = m;
+    $scope.segundo = s;
+  }
+
+  function obterContexto(latitude,longitude) {
+    $http.get('http://servidor-musikais.rhcloud.com/recommendation/get/lat='+latitude+'&lon='+longitude+'&horario='+$scope.hora).
+    success(function(data) {
+      $scope.contexto = data;
+    });
   }
 
 
