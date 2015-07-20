@@ -13,7 +13,8 @@
         </div>
         <select ng-model="motorista" ng-options="motorista.nome for motorista in motoristas track by motorista.nome"></select>
       </label>
-      <button class="button button-block button-balanced button-play icon ion-play"></button>
+
+      <button class="button button-block button-balanced button-play icon ion-play"ng-click="play()"></button>
       <!-- COLOCADO NO CONTROLLER CONFIG -->
       <!-- <ion-toggle class="item item-icon-left item-icon-right" ng-model="settings.monitor">
         <i class="icon ion-eye balanced"></i> Monitor

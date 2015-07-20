@@ -59,6 +59,22 @@ angular.module('starter.controllers', [])
     watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
   }
 
+  $scope.play = function(){
+    var d = new Date();
+    var timestamp = d.getTime();
+    var musicaId = $scope.contexto.musicas[0].id;
+    var busId = $scope.bus.id;
+    var motoristaId = $scope.motorista.id;
+    $http.get('http://servidor-musikais.rhcloud.com/recommendation/set/idOnibus='+busId+'&idMotorista='+motoristaId+'&idMusica='+musicaId+'&lat='+$scope.latitude+'&lon='+$scope.longitude+'&timestamp='+timestamp).
+    success(function(data) {
+      $ionicLoading.show({
+        template: data.message,
+        noBackdrop: true,
+        duration: 2000
+      });
+    });
+  }
+
   function initMap() {
     if($scope.settings.monitor && $scope.settings.force){
       $scope.mapClass = "map-class1";
@@ -127,8 +143,6 @@ angular.module('starter.controllers', [])
       }
       infowindow.open($scope.map, $scope.marker);
     });
-
-
   }
 
   function onSuccess(position) {
@@ -140,8 +154,8 @@ angular.module('starter.controllers', [])
       horaAtual();
       obterContexto(position.coords.latitude,position.coords.longitude);
     }else{
-      $scope.longitude = $scope.latText;
-      $scope.latitude = $scope.lngText;
+      $scope.longitude = $scope.lngText;
+      $scope.latitude = $scope.latText;
       $scope.marker.setPosition(new google.maps.LatLng($scope.latText, $scope.lngText));
       $scope.map.panTo(new google.maps.LatLng($scope.latText, $scope.lngText));
       horaAtual();
