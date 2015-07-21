@@ -1,5 +1,7 @@
 <ion-view view-title="Passageiro">
-  <ion-content scroll="false">
+  <ion-content>
+    <ion-refresher pulling-text="Arraste para atualizar..." on-refresh="refresh(bus)">
+    </ion-refresher>
     <label class="item item-input item-select">
       <div class="input-label">
         Onibus

@@ -1,5 +1,5 @@
 <ion-view view-title="Configurações">
-  <ion-content ng-controller="BusCtrl" >
+  <ion-content ng-controller="ConfigCtrl">
     <ion-list>
       <div class="item item-divider">Debug</div>
       <ion-toggle class="item item-icon-left item-icon-right" ng-model="settings.monitor">
@@ -8,6 +8,12 @@
       <ion-toggle class="item item-icon-left item-icon-right" ng-model="settings.force">
         <i class="icon ion-hammer balanced"></i> Force
       </ion-toggle>
+      <label class="item item-input item-select" ng-show="settings.force">
+        <div class="input-label">
+          Pontos
+        </div>
+        <select ng-model="regiao" ng-options="regiao.nome for regiao in regioes track by regiao.nome" ng-change="mudar()"></select>
+      </label>
 
     </ion-list>
   </ion-content>

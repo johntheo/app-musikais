@@ -5,8 +5,17 @@ angular.module('starter.controllers', [])
     $sceProvider.enabled(false);
   })
 
-.controller('ConfigCtrl', function($scope, settings) {
+.controller('ConfigCtrl', function($scope, $http, settings) {
   $scope.settings = settings;
+  $http.get('http://servidor-musikais.rhcloud.com/recommendation/get/regions').
+  success(function(data) {
+    $scope.regioes = data;
+  });
+
+  $scope.mudar = function() {
+    $scope.settings.latText = $scope.regiao.latitude;
+    $scope.settings.lngText = $scope.regiao.longitude;
+  }
 })
 
 .controller('UserCtrl', function($scope, $http, $ionicLoading, settings) {
@@ -29,6 +38,22 @@ angular.module('starter.controllers', [])
     });
   };
 
+  $scope.refresh = function(bus) {
+    $http.get('http://servidor-musikais.rhcloud.com/busUserContext/idOnibus=' + bus.id)
+      .success(function(data) {
+        $scope.show = true;
+        $scope.busContext = data;
+        $http.get('http://servidor-musikais.rhcloud.com/util/list/imagens/idRegiao=' + data.regiao.id).
+        success(function(data2) {
+          $scope.imagens = data2;
+        });
+      })
+      .finally(function() {
+        // Stop the ion-refresher from spinning
+        $scope.$broadcast('scroll.refreshComplete');
+      });
+  };
+
   $scope.vote = function(bus, idVoto) {
     $http.get('http://servidor-musikais.rhcloud.com/busUserContext/rate/idOnibus=' + bus.id + '&idVoto=' + idVoto).
     success(function(data) {
@@ -43,8 +68,6 @@ angular.module('starter.controllers', [])
 
 .controller('BusCtrl', function($scope, $ionicLoading, $compile, $http, $cordovaMedia, $timeout, settings, audio, ClockSrv) {
   $scope.settings = settings;
-  $scope.latText = -25.428877;
-  $scope.lngText = -49.271377;
   $scope.playing = false;
 
   $scope.initialize = function() {
@@ -81,7 +104,7 @@ angular.module('starter.controllers', [])
   $scope.tocarMusica = function() {
     var d = new Date();
     var timestamp = d.getTime();
-    var musicaId = $scope.contexto.musicas[0].id;
+    var musicaId = $scope.contexto.musicas[Math.floor(Math.random() * $scope.contexto.musicas.length)].id;
     $scope.musicaLink = 'http://musikais.com/musicas/' + musicaId + '.ogg';
     if ($scope.bus != null || $scope.motorista != null) {
       var busId = $scope.bus.id;
@@ -90,7 +113,7 @@ angular.module('starter.controllers', [])
       $http.get('http://servidor-musikais.rhcloud.com/recommendation/set/idOnibus=' + busId + '&idMotorista=' + motoristaId + '&idMusica=' + musicaId + '&lat=' + $scope.latitude + '&lon=' + $scope.longitude + '&timestamp=' + timestamp).
       success(function(data) {
         $ionicLoading.show({
-          template: data.message,
+          template: 'Carregando música',
           noBackdrop: true,
           duration: 2000
         });
@@ -135,7 +158,7 @@ angular.module('starter.controllers', [])
 
   function initMap() {
     $scope.settings.verifyMapClass();
-    var myLatlng = new google.maps.LatLng($scope.latText, $scope.lngText);
+    var myLatlng = new google.maps.LatLng($scope.settings.latText, $scope.settings.lngText);
 
     var mapOptions = {
       center: myLatlng,
@@ -203,12 +226,12 @@ angular.module('starter.controllers', [])
       horaAtual();
       obterContexto(position.coords.latitude, position.coords.longitude);
     } else {
-      $scope.longitude = $scope.lngText;
-      $scope.latitude = $scope.latText;
-      $scope.marker.setPosition(new google.maps.LatLng($scope.latText, $scope.lngText));
-      $scope.map.panTo(new google.maps.LatLng($scope.latText, $scope.lngText));
+      $scope.longitude = $scope.settings.lngText;
+      $scope.latitude = $scope.settings.latText;
+      $scope.marker.setPosition(new google.maps.LatLng($scope.settings.latText, $scope.settings.lngText));
+      $scope.map.panTo(new google.maps.LatLng($scope.settings.latText, $scope.settings.lngText));
       horaAtual();
-      obterContexto($scope.latText, $scope.lngText);
+      obterContexto($scope.settings.latText, $scope.settings.lngText);
     }
 
   }

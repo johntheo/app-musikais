@@ -27,8 +27,8 @@
         <source data-ng-src="{{musicaLink}}">
       </audio>-->
       <label class="item item-input" ng-show="settings.force">
-        <input type="number" ng-model="latText" placeholder="Latitude">
-        <input type="number" ng-model="lngText" placeholder="Longitude">
+        <input type="number" ng-model="settings.latText" placeholder="Latitude">
+        <input type="number" ng-model="settings.lngText" placeholder="Longitude">
       </label>
       <label class="item no-padding" ng-show="settings.monitor">
         <ion-scroll class="busDebug" zooming="false" direction="y">

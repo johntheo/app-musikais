@@ -38,7 +38,8 @@ angular.module('starter.services', [])
     return {
         monitor: false,
         force: false,
-        verifyMapClass: 'map-class4'
+        latText: -25.428877,
+        lngText: -49.271377
     }
 })
 
