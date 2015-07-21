@@ -1,8 +1,44 @@
 angular.module('starter.services', [])
+.factory('ClockSrv', function($interval){
+  var clock = null;
+  var service = {
+    startClock: function(fn){
+      if(clock === null){
+        clock = $interval(fn, 30000);
+      }
+    },
+    stopClock: function(){
+      if(clock !== null){
+        $interval.cancel(clock);
+        clock = null;
+      }
+    }
+  };
+
+  return service;
+})
+
+.factory('audio',function ($document) {
+  var audioElement = $document[0].createElement('audio'); // <-- Magic trick here
+  return {
+    audioElement: audioElement,
+
+    play: function(filename) {
+        audioElement.src = filename;
+        audioElement.play();     //  <-- Thats all you need
+    },
+    pause: function() {
+      audioElement.pause();
+    }
+
+  }
+})
+
 .factory('settings', function () {
     return {
         monitor: false,
-        force: false
+        force: false,
+        verifyMapClass: 'map-class4'
     }
 })
 

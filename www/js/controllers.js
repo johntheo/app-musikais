@@ -1,4 +1,9 @@
 angular.module('starter.controllers', [])
+  .config(function($sceProvider) {
+    // Completely disable SCE.  For demonstration purposes only!
+    // Do not use in new projects.
+    $sceProvider.enabled(false);
+  })
 
 .controller('ConfigCtrl', function($scope, settings) {
   $scope.settings = settings;
@@ -36,12 +41,27 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('BusCtrl', function($scope, $ionicLoading, $compile, $http, settings) {
+.controller('BusCtrl', function($scope, $ionicLoading, $compile, $http, $cordovaMedia, $timeout, settings, audio, ClockSrv) {
   $scope.settings = settings;
   $scope.latText = -25.428877;
   $scope.lngText = -49.271377;
+  $scope.playing = false;
 
   $scope.initialize = function() {
+    if (window.Connection) {
+      if (navigator.connection.type == Connection.NONE) {
+        $ionicPopup.confirm({
+            title: "Sem internet",
+            content: "Ops! Por enquanto não é possível rodar sem internet. Tente depois ou conecte-se a uma rede"
+          })
+          .then(function(result) {
+            if (!result) {
+              ionic.Platform.exitApp();
+            }
+          });
+      }
+    }
+
     $http.get('http://servidor-musikais.rhcloud.com/util/list/motorista').
     success(function(data) {
       $scope.motoristas = data;
@@ -58,34 +78,63 @@ angular.module('starter.controllers', [])
     initMap();
     watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
   }
-
-  $scope.play = function(){
+  $scope.tocarMusica = function() {
     var d = new Date();
     var timestamp = d.getTime();
     var musicaId = $scope.contexto.musicas[0].id;
-    var busId = $scope.bus.id;
-    var motoristaId = $scope.motorista.id;
-    $http.get('http://servidor-musikais.rhcloud.com/recommendation/set/idOnibus='+busId+'&idMotorista='+motoristaId+'&idMusica='+musicaId+'&lat='+$scope.latitude+'&lon='+$scope.longitude+'&timestamp='+timestamp).
-    success(function(data) {
-      $ionicLoading.show({
-        template: data.message,
-        noBackdrop: true,
-        duration: 2000
+    $scope.musicaLink = 'http://musikais.com/musicas/' + musicaId + '.ogg';
+    if ($scope.bus != null || $scope.motorista != null) {
+      var busId = $scope.bus.id;
+      var motoristaId = $scope.motorista.id;
+      audio.play($scope.musicaLink);
+      $http.get('http://servidor-musikais.rhcloud.com/recommendation/set/idOnibus=' + busId + '&idMotorista=' + motoristaId + '&idMusica=' + musicaId + '&lat=' + $scope.latitude + '&lon=' + $scope.longitude + '&timestamp=' + timestamp).
+      success(function(data) {
+        $ionicLoading.show({
+          template: data.message,
+          noBackdrop: true,
+          duration: 2000
+        });
       });
-    });
+      $scope.playing = true;
+    } else {
+      $ionicLoading.show({
+        template: 'Hey! Você esqueceu de informar ÔNIBUS ou MOTORISTA.',
+        noBackdrop: true,
+        duration: 3000
+      });
+    }
+
+  }
+
+  $scope.play = function() {
+
+    if ($scope.playing) {
+      ClockSrv.stopClock();
+      audio.pause();
+      $scope.playing = false;
+    } else {
+      $scope.tocarMusica();
+      ClockSrv.startClock(function() {
+        $scope.tocarMusica();
+      });
+
+    }
+  }
+
+  $scope.settings.verifyMapClass = function() {
+    if ($scope.settings.monitor && $scope.settings.force) {
+      $scope.settings.mapClass = "map-class1";
+    } else if ($scope.settings.monitor && !$scope.settings.force) {
+      $scope.settings.mapClass = "map-class2";
+    } else if (!$scope.settings.monitor && $scope.settings.force) {
+      $scope.settings.mapClass = "map-class3";
+    } else if (!$scope.settings.monitor && !$scope.settings.force) {
+      $scope.settings.mapClass = "map-class4";
+    }
   }
 
   function initMap() {
-    if($scope.settings.monitor && $scope.settings.force){
-      $scope.mapClass = "map-class1";
-    } else if($scope.settings.monitor && !$scope.settings.force){
-      $scope.mapClass = "map-class2";
-    } else if(!$scope.settings.monitor && $scope.settings.force){
-      $scope.mapClass = "map-class3";
-    } else if(!$scope.settings.monitor && !$scope.settings.force){
-      $scope.mapClass = "map-class4";
-    }
-
+    $scope.settings.verifyMapClass();
     var myLatlng = new google.maps.LatLng($scope.latText, $scope.lngText);
 
     var mapOptions = {
@@ -146,27 +195,34 @@ angular.module('starter.controllers', [])
   }
 
   function onSuccess(position) {
-    if(!$scope.settings.force){
+    if (!$scope.settings.force) {
       $scope.longitude = position.coords.longitude;
       $scope.latitude = position.coords.latitude;
       $scope.marker.setPosition(new google.maps.LatLng($scope.latitude, $scope.longitude));
       $scope.map.panTo(new google.maps.LatLng($scope.latitude, $scope.longitude));
       horaAtual();
-      obterContexto(position.coords.latitude,position.coords.longitude);
-    }else{
+      obterContexto(position.coords.latitude, position.coords.longitude);
+    } else {
       $scope.longitude = $scope.lngText;
       $scope.latitude = $scope.latText;
       $scope.marker.setPosition(new google.maps.LatLng($scope.latText, $scope.lngText));
       $scope.map.panTo(new google.maps.LatLng($scope.latText, $scope.lngText));
       horaAtual();
-      obterContexto($scope.latText,$scope.lngText);
+      obterContexto($scope.latText, $scope.lngText);
     }
 
   }
 
   function onError(error) {
-    alert('code: ' + error.code + '\n' +
-      'message: ' + error.message + '\n');
+    $ionicPopup.confirm({
+        title: error.code,
+        content: error.message
+      })
+      .then(function(result) {
+        if (!result) {
+          ionic.Platform.exitApp();
+        }
+      });
   }
 
   function horaAtual() {
@@ -179,8 +235,8 @@ angular.module('starter.controllers', [])
     $scope.segundo = s;
   }
 
-  function obterContexto(latitude,longitude) {
-    $http.get('http://servidor-musikais.rhcloud.com/recommendation/get/lat='+latitude+'&lon='+longitude+'&horario='+$scope.hora).
+  function obterContexto(latitude, longitude) {
+    $http.get('http://servidor-musikais.rhcloud.com/recommendation/get/lat=' + latitude + '&lon=' + longitude + '&horario=' + $scope.hora).
     success(function(data) {
       $scope.contexto = data;
     });

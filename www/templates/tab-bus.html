@@ -1,6 +1,6 @@
 <ion-view title="Ônibus">
-  <ion-content ng-controller="BusCtrl" ng-init="initialize()" scroll="false">
-    <div class="list">
+  <ion-content ng-controller="BusCtrl" ng-init="initialize()" scroll="true">
+    <ion-list>
       <label class="item item-input item-select">
         <div class="input-label">
           Onibus
@@ -14,7 +14,8 @@
         <select ng-model="motorista" ng-options="motorista.nome for motorista in motoristas track by motorista.nome"></select>
       </label>
 
-      <button class="button button-block button-balanced button-play icon ion-play"ng-click="play()"></button>
+      <button class="button button-block button-balanced button-play icon ion-play" ng-click="play()" ng-hide="playing"></button>
+      <button class="button button-block button-balanced button-play icon ion-pause" ng-click="play()" ng-show="playing"></button>
       <!-- COLOCADO NO CONTROLLER CONFIG -->
       <!-- <ion-toggle class="item item-icon-left item-icon-right" ng-model="settings.monitor">
         <i class="icon ion-eye balanced"></i> Monitor
@@ -22,6 +23,9 @@
       <ion-toggle class="item item-icon-left item-icon-right" ng-model="settings.force">
         <i class="icon ion-hammer balanced"></i> Force
       </ion-toggle>-->
+      <!--<audio autoplay loop>
+        <source data-ng-src="{{musicaLink}}">
+      </audio>-->
       <label class="item item-input" ng-show="settings.force">
         <input type="number" ng-model="latText" placeholder="Latitude">
         <input type="number" ng-model="lngText" placeholder="Longitude">
@@ -47,8 +51,8 @@
           </div>
         </ion-scroll>
       </label>
-    </div>
-    <div id="map" class="row responsive-sm bar bar-footer map-class1"></div>
+    </ion-list>
+    <div id="map" class="row responsive-sm map-class4 no-padding"></div>
     <!--<div id="map" ng-class="mapClass"></div>-->
 
   </ion-content>
