@@ -1,4 +1,20 @@
-angular.module('starter.services', [])
+angular.module('starter.services', ['firebase'])
+.factory('firebaseData', function($firebase){
+  var ref = new Firebase("https://musikais.firebaseio.com/"),
+      refOnibus = new Firebase("https://musikais.firebaseio.com/onibus"),
+      refMotoristas = new Firebase("https://musikais.firebaseio.com/motorista");
+  return{
+    ref: function(){
+      return ref;
+    },
+    refOnibus: function(){
+      return refOnibus;
+    },
+    refMotoristas: function(){
+      return refMotoristas;
+    }
+  }
+})
 .factory('ClockSrv', function($interval){
   var clock = null;
   var service = {

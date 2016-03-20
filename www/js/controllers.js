@@ -18,13 +18,14 @@ angular.module('starter.controllers', [])
   }
 })
 
-.controller('UserCtrl', function($scope, $http, $ionicLoading, settings) {
+.controller('UserCtrl', function($scope, $http, $ionicLoading, settings,$firebase,firebaseData) {
   $scope.show = false;
 
-  $http.get('http://servidor-musikais.rhcloud.com/util/list/onibus').
-  success(function(data) {
-    $scope.onibus = data;
-  });
+  // $http.get('http://servidor-musikais.rhcloud.com/util/list/onibus').
+  // success(function(data) {
+  //   $scope.onibus = data;
+  // });
+  $scope.onibus = $firebase(firebaseData.refOnibus()).$asArray();
 
   $scope.change = function(bus) {
     $http.get('http://servidor-musikais.rhcloud.com/busUserContext/idOnibus=' + bus.id).
@@ -66,7 +67,7 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('BusCtrl', function($scope, $ionicLoading, $compile, $http, $cordovaMedia, $timeout, settings, audio, ClockSrv) {
+.controller('BusCtrl', function($scope, $ionicLoading, $compile, $http, $cordovaMedia, $timeout, settings, audio, ClockSrv,$firebase,firebaseData) {
   $scope.settings = settings;
   $scope.playing = false;
 
@@ -85,14 +86,16 @@ angular.module('starter.controllers', [])
       }
     }
 
-    $http.get('http://servidor-musikais.rhcloud.com/util/list/motorista').
-    success(function(data) {
-      $scope.motoristas = data;
-    });
-    $http.get('http://servidor-musikais.rhcloud.com/util/list/onibus').
-    success(function(data) {
-      $scope.onibus = data;
-    });
+    // $http.get('http://servidor-musikais.rhcloud.com/util/list/motorista').
+    // success(function(data) {
+    //   $scope.motoristas = data;
+    // });
+    // $http.get('http://servidor-musikais.rhcloud.com/util/list/onibus').
+    // success(function(data) {
+    //   $scope.onibus = data;
+    // });
+    $scope.motoristas = $firebase(firebaseData.refMotoristas()).$asArray();
+    $scope.onibus = $firebase(firebaseData.refOnibus()).$asArray();
 
     var options = {
       frequency: 1000,
