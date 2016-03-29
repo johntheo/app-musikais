@@ -21,11 +21,11 @@ angular.module('starter.controllers', [])
 .controller('UserCtrl', function($scope, $http, $ionicLoading, settings,$firebase,firebaseData) {
   $scope.show = false;
 
-  // $http.get('http://servidor-musikais.rhcloud.com/util/list/onibus').
-  // success(function(data) {
-  //   $scope.onibus = data;
-  // });
-  $scope.onibus = $firebase(firebaseData.refOnibus()).$asArray();
+   $http.get('http://servidor-musikais.rhcloud.com/util/list/onibus').
+   success(function(data) {
+     $scope.onibus = data;
+   });
+  //$scope.onibus = $firebase(firebaseData.refOnibus()).$asArray();
 
   $scope.change = function(bus) {
     $http.get('http://servidor-musikais.rhcloud.com/busUserContext/idOnibus=' + bus.id).
@@ -86,24 +86,25 @@ angular.module('starter.controllers', [])
       }
     }
 
-    // $http.get('http://servidor-musikais.rhcloud.com/util/list/motorista').
-    // success(function(data) {
-    //   $scope.motoristas = data;
-    // });
-    // $http.get('http://servidor-musikais.rhcloud.com/util/list/onibus').
-    // success(function(data) {
-    //   $scope.onibus = data;
-    // });
-    $scope.motoristas = $firebase(firebaseData.refMotoristas()).$asArray();
-    $scope.onibus = $firebase(firebaseData.refOnibus()).$asArray();
+    $http.get('http://servidor-musikais.rhcloud.com/util/list/motorista').
+    success(function(data) {
+      $scope.motoristas = data;
+    });
+    //$scope.motoristas = $firebase(firebaseData.refMotoristas()).$asArray();
+    $http.get('http://servidor-musikais.rhcloud.com/util/list/onibus').
+    success(function(data) {
+      $scope.onibus = data;
+    });
+    //$scope.onibus = $firebase(firebaseData.refOnibus()).$asArray();
 
     var options = {
       frequency: 1000,
-      timeout: 30000
+      timeout: 1000
     };
     initMap();
     watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
   }
+
   $scope.tocarMusica = function() {
     var d = new Date();
     var timestamp = d.getTime();
@@ -227,14 +228,21 @@ angular.module('starter.controllers', [])
       $scope.marker.setPosition(new google.maps.LatLng($scope.latitude, $scope.longitude));
       $scope.map.panTo(new google.maps.LatLng($scope.latitude, $scope.longitude));
       horaAtual();
-      obterContexto(position.coords.latitude, position.coords.longitude);
+
+          var geoFire = new GeoFire(firebaseData.refOnibus());
+          geoFire.set('0', [position.coords.longitude, position.coords.latitude]); 
+
+      //obterContexto(position.coords.latitude, position.coords.longitude);
     } else {
       $scope.longitude = $scope.settings.lngText;
       $scope.latitude = $scope.settings.latText;
       $scope.marker.setPosition(new google.maps.LatLng($scope.settings.latText, $scope.settings.lngText));
       $scope.map.panTo(new google.maps.LatLng($scope.settings.latText, $scope.settings.lngText));
       horaAtual();
-      obterContexto($scope.settings.latText, $scope.settings.lngText);
+
+          var geoFire = new GeoFire(firebaseData.refOnibus());
+          geoFire.set($scope.bus.id, [37.785326, -122.405696]);
+      //obterContexto($scope.settings.latText, $scope.settings.lngText);
     }
 
   }
